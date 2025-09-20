@@ -4,6 +4,7 @@
 #include <QString>
 #include <QThread>
 #include <QObject>
+#include <QMessageBox>
 
 class Worker: public QThread
 {
