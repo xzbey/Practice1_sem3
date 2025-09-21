@@ -5,6 +5,7 @@
 #include <QProgressBar>
 #include <QVector>
 #include <QMessageBox>
+#include <QDebug>
 #include "processinfo.h"
 
 
@@ -30,6 +31,8 @@ private slots:
     void on_pB_pause_clicked();
 
     void on_pB_stop_clicked();
+
+    void on_pB_delete_clicked();
 
 private:
     Ui::MainWindow *ui;

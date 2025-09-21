@@ -6,12 +6,14 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->tableWidget->setWordWrap(true);
 }
 
 MainWindow::~MainWindow()
 {
     for (auto info: processes) {
         if (info->worker) {
+            disconnect(info->worker, nullptr, nullptr, nullptr);
             info->worker->stop();
             info->worker->wait();
             info->worker->deleteLater();
@@ -37,8 +39,10 @@ void MainWindow::on_pB_add_clicked()
     ui->tableWidget->setCellWidget(rowCount, 2, bar);
 
     ui->tableWidget->setItem(rowCount, 3, new QTableWidgetItem(info->status));
-
     processes.append(info);
+
+    ui->tableWidget->resizeRowsToContents();
+    ui->tableWidget->resizeColumnsToContents();
 }
 
 
@@ -110,5 +114,30 @@ void MainWindow::on_pB_stop_clicked()
         info->status = "Остановлен";
         ui->tableWidget->item(row, 3)->setText(info->status);
     }
+}
+
+
+void MainWindow::on_pB_delete_clicked()
+{
+    int row = ui->tableWidget->currentRow();
+    if (row < 0) {
+        QMessageBox::warning(this, "Ошибка", "Процесс не выбран");
+        return;
+    }
+
+    ProcessInfo* info = processes[row];
+
+    if (info->worker != nullptr) {
+        disconnect(info->worker, nullptr, nullptr, nullptr);
+        info->worker->stop();
+        info->worker->wait();
+        info->worker->deleteLater();
+        info->worker = nullptr;
+    }
+
+    delete info;
+
+    processes.remove(row);
+    ui->tableWidget->removeRow(row);
 }
 
